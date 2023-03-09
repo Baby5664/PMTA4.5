@@ -1,0 +1,450 @@
+# E-mail address for mailer's administrator (please specify!)
+#
+#postmaster you@yourdomain.com
+
+#
+# Settings per source IP address (for incoming SMTP connections)
+#
+Pickup /var/www/tmp /var/www/badmail
+
+<source 127.0.0.1>
+    always-allow-relaying yes   # allow feeding from 127.0.0.1
+    process-x-virtual-mta yes   # allow selection of a virtual MTA
+    max-message-size 0          # 0 implies no cap, in bytes
+    smtp-service yes            # allow SMTP service
+</source>
+
+<source 0/0>                 # matches all
+    log-connections no
+    log-commands    no       # WARNING: verbose!
+    log-data        no       # WARNING: even more verbose!
+    allow-unencrypted-plain-auth yes
+    default-virtual-mta yourdomain.com
+</source>
+
+#</domain>
+
+#
+# "{gmImprinter}" is a special queue used for imprinting Goodmail tokens.
+#
+<domain {gmImprinter}>
+    max-events-recorded 150
+    log-messages yes
+    log-data no             # extremely verbose, for debugging only
+    retry-after 15s
+</domain>
+
+<domain *>
+    max-smtp-out    5       # max. connections *per domain*
+    bounce-after    4d12h    # 4 days, 12 hours
+    retry-after     20m      # 20 minutes
+    dk-sign yes
+    dkim-sign yes
+    max-msg-rate 500/h
+    max-msg-per-connection 4  # most ISPs accept 100 emails per session   
+    max-errors-per-connection 10  # avoid disconnect due to long sequence of invalid recipients
+    use-starttls yes
+    require-starttls no
+    </domain>
+
+##############################################################
+#all start here by roseman
+##############################################################
+
+<smtp-pattern-list backoff>
+#
+# A QUEUE IN BACKOFF MODE WILL SEND MORE SLOWLY 
+# To place a queue back into normal mode, a command similar
+# to one of the following will need to be run:
+# "pmta set queue --mode=normal yahoo.com
+# or
+# "pmta set queue --mode=normal yahoo.com/vmta1
+#
+# To use backoff mode, uncomment individual <domain> directives
+#
+#AOL Errors
+reply /421 .* SERVICE NOT AVAILABLE/ mode=backoff
+reply /generating high volumes of.* complaints from AOL/ mode=backoff
+reply /554 .*aol.com/ mode=backoff 
+reply /421dynt1/ mode=backoff 
+reply /HVU:B1/ mode=backoff 
+reply /DNS:NR/ mode=backoff
+reply /RLY:NW/ mode=backoff
+reply /DYN:T1/ mode=backoff
+reply /RLY:BD/ mode=backoff
+reply /RLY:CH2/ mode=backoff
+#
+#Yahoo Errors
+reply /421 .* Please try again later/ mode=backoff
+reply /421 Message temporarily deferred/ mode=backoff
+reply /VS3-IP5 Excessive unknown recipients/ mode=backoff
+reply /VSS-IP Excessive unknown recipients/ mode=backoff
+# The following 4 Yahoo errors may be very common
+# Using them may result in high use of backoff mode
+#
+reply /\[GL01\] Message from/ mode=backoff
+reply /\[TS01\] Messages from/ mode=backoff
+reply /\[TS02\] Messages from/ mode=backoff
+reply /\[TS03\] All messages from/ mode=backoff
+#
+#Hotmail Errors
+reply /exceeded the rate limit/ mode=backoff
+reply /exceeded the connection limit/ mode=backoff
+reply /Mail rejected by Windows Live Hotmail for policy reasons/ mode=backoff
+#
+#Adelphia Errors
+reply /421 Message Rejected/ mode=backoff
+reply /Client host rejected/ mode=backoff
+reply /blocked using UCEProtect/ mode=backoff
+#
+#Road Runner Errors
+reply /Mail Refused/ mode=backoff
+reply /421 Exceeded allowable connection time/ mode=backoff
+reply /amIBlockedByRR/ mode=backoff
+reply /block-lookup/ mode=backoff
+reply /Too many concurrent connections from source IP/ mode=backoff
+#
+#General Errors
+reply /too many/ mode=backoff
+reply /Exceeded allowable connection time/ mode=backoff
+reply /Connection rate limit exceeded/ mode=backoff
+reply /refused your connection/ mode=backoff
+reply /try again later/ mode=backoff
+reply /try later/ mode=backoff
+reply /550 RBL/ mode=backoff
+reply /TDC internal RBL/ mode=backoff
+reply /connection refused/ mode=backoff
+reply /please see The Spamhaus Project/ mode=backoff
+reply /Message Rejected/ mode=backoff
+reply /refused by antispam/ mode=backoff
+reply /Service not available/ mode=backoff
+reply /currently blocked/ mode=backoff
+reply /locally blacklisted/ mode=backoff
+reply /not currently accepting mail from your ip/ mode=backoff
+reply /421.*closing connection/ mode=backoff
+reply /421.*Lost connection/ mode=backoff
+reply /476 connections from your host are denied/ mode=backoff
+reply /421 Connection cannot be established/ mode=backoff
+reply /421 temporary envelope failure/ mode=backoff
+reply /421 4.4.2 Timeout while waiting for command/ mode=backoff
+reply /450 Requested action aborted/ mode=backoff
+reply /550 Access denied/ mode=backoff
+</smtp-pattern-list>
+#
+<domain gmail.com>
+max-smtp-out 50
+max-msg-per-connection 20 
+max-rcpt-per-message 100
+max-msg-rate  250/h
+smtp-pattern-list backoff
+# backoff-to-normal-after 2h #added in v3.5
+# backoff-notify postmaster@yourdomain.com
+# backoff-max-msg-per-hour 600 # Use with PowerMTA 3.2
+# backoff-max-msg-rate 600/h # Use with PowerMTA 3.5
+# backoff-retry-after 30m
+</domain>
+#
+# http://postmaster.info.aol.com/faq/m...q.html#msgconn
+<domain aol.com>
+max-smtp-out 50
+max-msg-per-connection 20 
+max-rcpt-per-message 100
+max-msg-rate 1500/h
+smtp-pattern-list backoff
+# backoff-to-normal-after 2h #added in v3.5
+# backoff-notify postmaster@yourdomain.com
+# backoff-max-msg-per-hour 600 # Use with PowerMTA 3.2
+# backoff-max-msg-rate 600/h # Use with PowerMTA 3.5
+# backoff-retry-after 30m
+</domain>
+#
+<domain yahoo.com>
+max-smtp-out 50
+max-msg-per-connection 5
+max-msg-rate 2000/h
+smtp-greeting-timeout 5m # added in v3.2r17
+mx-connection-attempts 10 # added in v3.2r16
+smtp-pattern-list backoff
+# backoff-to-normal-after 2h #added in v3.5
+# backoff-max-msg-per-hour 600 # Use with PowerMTA 3.2
+# backoff-max-msg-rate 600/h # Use with PowerMTA 3.5
+# backoff-retry-after 30m
+# backoff-notify postmaster@yourdomain.com
+</domain>
+#
+<domain hotmail.com>
+max-smtp-out 50
+max-msg-per-connection 5
+max-msg-rate 2000/h
+421-means-mx-unavailable yes
+smtp-pattern-list backoff
+# backoff-to-normal-after 2h #added in v3.5
+# backoff-max-msg-per-hour 600 # Use with PowerMTA 3.2
+# backoff-max-msg-rate 600/h # Use with PowerMTA 3.5
+# backoff-retry-after 30m
+# backoff-notify postmaster@yourdomain.com
+</domain>
+#
+<domain msn.com>
+max-smtp-out 50
+max-msg-per-connection 5
+max-msg-rate 2000/h
+smtp-pattern-list backoff
+# backoff-to-normal-after 2h #added in v3.5
+# backoff-max-msg-per-hour 600 # Use with PowerMTA 3.2
+# backoff-max-msg-rate 600/h # Use with PowerMTA 3.5
+# backoff-retry-after 30m
+# backoff-notify postmaster@yourdomain.com
+</domain>
+#
+<domain cox.net>
+max-smtp-out 50
+</domain>
+#
+<domain att.net>
+max-smtp-out 50
+</domain>
+#
+# Comcast.net Security - Comcast PostMaster Page
+# Comcast.net Feedback Loop - Feedback Loop Request Form
+<domain comcast.net>
+max-smtp-out 50
+max-msg-per-connection 5
+max-rcpt-per-message 100
+max-msg-rate 1000/h
+</domain>
+#
+<domain adelphia.net>
+max-smtp-out 50
+smtp-pattern-list backoff
+</domain>
+#
+#
+#http://security.rr.com/RRUnblockRequest.htm
+<domain [*.]rr.com>
+#For new IPs
+max-msg-rate 500/h
+#
+# For use with v3.2r23
+# rate-limit-min-granularity 1m
+#
+#For whitelisted IPs
+# max-msg-per-hour 10000
+smtp-pattern-list backoff
+</domain>
+#
+<domain bellsouth.net>
+max-smtp-out 5
+max-msg-per-connection 1
+retry-after 5m
+</domain>
+#
+<domain mac.com>
+ignore-chunking yes
+</domain>
+#
+
+#
+# Excite
+#
+# We have heard reports that Excite.com limits senders to 1,000 emails in a 10 minute period per IP during the day, but is unlimited between 1:00am to 5:00am MDT. While we cannot confirm these reports, here is what can be done in PowerMTA if you are having trouble sending to excite.com. Use the following settings:
+#
+#
+<domain excite.com>
+# backoff-max-msg-per-hour 600 # Use with PowerMTA 3.2
+# backoff-max-msg-rate 600/h # Use with PowerMTA 3.5
+</domain>
+#
+#The setting ?¡ãbackoff-max-msg-per-hour?¡À will cause PowerMTA to take the total amount, divide it by 12, and send no more than that amount in 5 minute intervals over the hour. The number of recent delivery attempts is not kept in persistent storage, so re-starting PowerMTA resets the limit, possibly causing it to actually be exceeded. You may want to set it a little lower than 6000 to give yourself a buffer.
+##Now for the tricky part.
+#You will need to set the server to run the command ?¡ãpmta set queue --mode=normal excite.com/*?¡À every night at 1am MDT (cron job in Linux or scheduled task in Windows). This will cause PowerMTA to go into normal mode, and send email in an unrestricted manner. At 5am MDT, schedule the command ?¡ãpmta set queue --mode=backoff excite.com/*?¡À to run. This will put all excite.com email in backoff mode, and the above settings will go back into place.
+
+#
+# Comcast
+#
+#From the following page:
+#Mail to Comcast is queued and I see RL000001 in my mail logs. What does this mean?
+#It seems that Comcast has added some rate limiting based on your SenderScore (https://www.senderscore.org/).
+#As such, The following configuration can be used (in conjunction with max-msg-per-connection and max-smtp-out from above), changing the rate based on your score and the data from Comcast's site:
+#
+<domain comcast.net>
+max-msg-rate 3600/h
+</domain>
+#
+
+##############################################################
+#all over here by roseman
+##############################################################
+smtp-listener 0/0:465 tls=yes
+smtp-server-tls-certificate /etc/pmta/certchain.pem
+smtp-server-tls-ciphers HIGH:!ADH:@STRENGTH
+
+<source 0/0>
+allow-starttls yes
+require-starttls-before-auth yes
+allow-unencrypted-plain-auth no
+</source>
+
+<smtp-user tiger>
+        password tiger123
+        source {smtpuser-auth}
+</smtp-user>
+<source {smtpuser-auth}>
+        smtp-service yes
+        always-allow-relaying yes
+        require-auth true
+        process-x-virtual-mta yes
+        default-virtual-mta pmta-pool
+        remove-received-headers true
+        add-received-header false
+        hide-message-source true
+</source>
+##############################################################
+# BEGIN: BOUNCE RULES by roseman
+##############################################################
+
+<bounce-category-patterns>
+/spam/ spam-related
+/junk mail/ spam-related
+/blacklist/ spam-related
+/blocked/ spam-related
+/\bU\.?C\.?E\.?\b/ spam-related
+/\bAdv(ertisements?)?\b/ spam-related
+/unsolicited/ spam-related
+/\b(open)?RBL\b/ spam-related
+/realtime blackhole/ spam-related
+/http:\/\/basic.wirehub.nl\/blackholes.html/ spam-related
+/\bvirus\b/ virus-related
+/message +content/ content-related
+/content +rejected/ content-related
+/quota/ quota-issues
+/limit exceeded/ quota-issues
+/mailbox +(is +)?full/ quota-issues
+/\bstorage\b/ quota-issues
+/(user|mailbox|recipient|rcpt|local part|address|account|mail drop|ad(d?)ressee) (has|has been|is)? *(currently|temporarily +)?(disabled|expired|inactive|not activated)/ inactive-mailbox
+/(conta|usu.rio) inativ(a|o)/ inactive-mailbox
+/Too many (bad|invalid|unknown|illegal|unavailable) (user|mailbox|recipient|rcpt|local part|address|account|mail drop|ad(d?)ressee)/ other
+/(No such|bad|invalid|unknown|illegal|unavailable) (local +)?(user|mailbox|recipient|rcpt|local part|address|account|mail drop|ad(d?)ressee)/ bad-mailbox
+/(user|mailbox|recipient|rcpt|local part|address|account|mail drop|ad(d?)ressee) +(\S+@\S+ +)?(not (a +)?valid|not known|not here|not found|does not exist|bad|invalid|unknown|illegal|unavailable)/ bad-mailbox
+/\S+@\S+ +(is +)?(not (a +)?valid|not known|not here|not found|does not exist|bad|invalid|unknown|illegal|unavailable)/ bad-mailbox
+/no mailbox here by that name/ bad-mailbox
+/my badrcptto list/ bad-mailbox
+/not our customer/ bad-mailbox
+/no longer (valid|available)/ bad-mailbox
+/have a \S+ account/ bad-mailbox
+/\brelay(ing)?/ relaying-issues
+/domain (retired|bad|invalid|unknown|illegal|unavailable)/ bad-domain
+/domain no longer in use/ bad-domain
+/domain (\S+ +)?(is +)?obsolete/ bad-domain
+/denied/ policy-related
+/prohibit/ policy-related
+/rejected/ policy-related
+/refused/ policy-related
+/allowed/ policy-related
+/banned/ policy-related
+/policy/ policy-related
+/suspicious activity/ policy-related
+/bad sequence/ protocol-errors
+/syntax error/ protocol-errors
+/\broute\b/ routing-errors
+/\bunroutable\b/ routing-errors
+/\bunrouteable\b/ routing-errors
+/^2.\d.\d/ success
+/^[45]\.1\.1/ bad-mailbox
+/^[45]\.1\.2/ bad-domain
+/^[45]\.3\.5/ bad-configuration
+/^[45]\.4\.1/ no-answer-from-host
+/^[45]\.4\.2/ bad-connection
+/^[45]\.4\.4/ routing-errors
+/^[45]\.4\.6/ routing-errors
+/^[45]\.4\.7/ message-expired
+/^[45]\.7\.1/ policy-related
+// other # catch-all
+</bounce-category-patterns>
+
+##############################################################
+# END: BOUNCE RULES by roseman
+##############################################################
+
+#
+# Goodmail imprinter configuration
+#
+#<gm-imprinter>
+#    account-id ID               # replace with value from mailcenter
+#    imprinter-id ID             # replace with value from mailcenter
+#    imprinter-password PW       # replace with value from mailcenter
+#
+#    # If the directives below are not specified, defaults are picked as
+#    # described in the Goodmail documentation
+#
+#    default-token-class 1       # optionally set as appropriate
+#    default-content-type 1      # optionally set as appropriate
+#    default-payer-id ID         # optionally set as appropriate
+#    default-obo-id ID           # optionally set as appropriate
+#</gm-imprinter>
+
+
+#
+# Port used for HTTP management interface
+#
+http-mgmt-port 1212
+
+#
+# IP addresses allowed to access the HTTP management interface, one
+# per line
+#
+http-access 127.0.0.1 monitor
+http-access 0/0 monitor
+#
+# Synchronize I/O to disk after receiving the message.  'false' yields
+# higher performance, but the message may be lost if the system crashes
+# before it can write the data to disk.
+#
+sync-msg-create false
+
+#
+# Synchronize I/O to disk after updating the message (e.g., to mark recipients
+# handled).  'false' yields higher performance, but if the system crashes
+# before it can write the data to disk, some recipients may receive multiple
+# copies of a message.
+#
+sync-msg-update false
+
+#
+# Whether to run the PowerMTA deamon as root
+#
+run-as-root no
+
+#
+# WARNING -- changing the settings below will probably break
+#            RPM installation, logrotate, etc.
+
+#
+# Logging file name
+#
+log-file /var/log/pmta/log        # logrotate is used for rotation
+
+#
+# Accounting file(s)
+#
+<acct-file /var/log/pmta/acct.csv>
+#    move-to /opt/myapp/pmta-acct   # configure as fit for your application
+    move-interval 5m
+    max-size 15M
+</acct-file>
+
+#
+# Spool directories
+#
+spool /var/spool/pmta
+
+# EOF
+<virtual-mta yourdomain.com>
+smtp-source-host yourip yourdomain.com
+domain-key dkim,*,/etc/pmta/dkim.private.key
+</virtual-mta>
+
+
+<virtual-mta-pool pmta-pool>
+  virtual-mta yourdomain.com
+</virtual-mta-pool>
