@@ -40,7 +40,7 @@ Pickup /var/www/tmp /var/www/badmail
     retry-after     20m      # 20 minutes
     dk-sign yes
     dkim-sign yes
-    max-msg-rate 500/h
+    max-msg-rate 2000/h
     max-msg-per-connection 4  # most ISPs accept 100 emails per session   
     max-errors-per-connection 10  # avoid disconnect due to long sequence of invalid recipients
     use-starttls yes
@@ -255,9 +255,9 @@ ignore-chunking yes
 # backoff-max-msg-rate 600/h # Use with PowerMTA 3.5
 </domain>
 #
-#The setting ?¡ãbackoff-max-msg-per-hour?¡À will cause PowerMTA to take the total amount, divide it by 12, and send no more than that amount in 5 minute intervals over the hour. The number of recent delivery attempts is not kept in persistent storage, so re-starting PowerMTA resets the limit, possibly causing it to actually be exceeded. You may want to set it a little lower than 6000 to give yourself a buffer.
+#The setting ?Â¡Ã£backoff-max-msg-per-hour?Â¡Ã€ will cause PowerMTA to take the total amount, divide it by 12, and send no more than that amount in 5 minute intervals over the hour. The number of recent delivery attempts is not kept in persistent storage, so re-starting PowerMTA resets the limit, possibly causing it to actually be exceeded. You may want to set it a little lower than 6000 to give yourself a buffer.
 ##Now for the tricky part.
-#You will need to set the server to run the command ?¡ãpmta set queue --mode=normal excite.com/*?¡À every night at 1am MDT (cron job in Linux or scheduled task in Windows). This will cause PowerMTA to go into normal mode, and send email in an unrestricted manner. At 5am MDT, schedule the command ?¡ãpmta set queue --mode=backoff excite.com/*?¡À to run. This will put all excite.com email in backoff mode, and the above settings will go back into place.
+#You will need to set the server to run the command ?Â¡Ã£pmta set queue --mode=normal excite.com/*?Â¡Ã€ every night at 1am MDT (cron job in Linux or scheduled task in Windows). This will cause PowerMTA to go into normal mode, and send email in an unrestricted manner. At 5am MDT, schedule the command ?Â¡Ã£pmta set queue --mode=backoff excite.com/*?Â¡Ã€ to run. This will put all excite.com email in backoff mode, and the above settings will go back into place.
 
 #
 # Comcast
