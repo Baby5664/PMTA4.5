@@ -163,7 +163,7 @@ smtp-pattern-list backoff
 </domain>
 #
 # domains that resolve to ?.mx.mail.yahoo.com
-domain-macro yahoo yahoo.com, yahoo.in, yahoo.ca, rocketmail.com, ymail.com, yahoo.com.au, geocities.com, yahoo.com.mx, braltavista.com, ameritech.net, att.net, bellsouth.net, attbroadband.com, attcanada.net, attglobal.com, attglobal.net, attnet.com, attworldnet.com, bellatlantic.net, bellatlantic.net, bellsouth.com, bellsouth.net, flash.net, netzero.net, nvbell.net, pacbell.net, prodigy.com, prodigy.net, sbcglobal.net, sbcglobal.net, snet.net, swbell.com, swbell.net, toast.net, usa.net, verizon.com, verizon.net, verizonmail.com, vzwpix.com, wans.net, worldnet.att.net, yahoo.net, gtconsultants.net, indutorres.com, micelle-inc.com
+domain-macro yahoo yahoo.com, yahoo.in, yahoo.ca,yahoo.co.jp,rocketmail.com, ymail.com, yahoo.com.au, geocities.com, yahoo.com.mx, braltavista.com, ameritech.net, att.net, bellsouth.net, attbroadband.com, attcanada.net, attglobal.com, attglobal.net, attnet.com, attworldnet.com, bellatlantic.net, bellatlantic.net, bellsouth.com, bellsouth.net, flash.net, netzero.net, nvbell.net, pacbell.net, prodigy.com, prodigy.net, sbcglobal.net, sbcglobal.net, snet.net, swbell.com, swbell.net, toast.net, usa.net, verizon.com, verizon.net, verizonmail.com, vzwpix.com, wans.net, worldnet.att.net, yahoo.net, gtconsultants.net, indutorres.com, micelle-inc.com
 <domain $yahoo>
 max-smtp-out 50
 max-msg-per-connection 5
