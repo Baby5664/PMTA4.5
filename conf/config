@@ -131,7 +131,9 @@ reply /450 Requested action aborted/ mode=backoff
 reply /550 Access denied/ mode=backoff
 </smtp-pattern-list>
 #
-<domain gmail.com>
+# domains that resolve to (alt?.)gmail-smtp-in.l.google.com
+domain-macro gmail gmail.com, googlemail.com, accesorios.com.ec ,aeromundo.com.ec ,afquito.org.ec ,agentur.com.ec ,agroreprain.com ,alliance.k12.ec ,altura.com.ec ,amagua-cem.com ,automekano-ec.com ,bmind.ec ,caminosca-sa.com ,casagrande.edu.ec ,cccuenca.com.ec ,cec-epn.edu.ec ,ceresecuador-cert.com ,chaideychaide.com ,cig.org.ec ,ciudadalfaro.gob.ec ,ciudadceleste.com ,coac-sanfra.com ,coldwellbanker.com.ec ,comunidadandina.org ,cosas.com.ec ,costamar.com ,cti.espol.edu.ec ,dupocsa.com ,ecoluzsa.com ,eeq.com.ec ,eldiario.com.ec ,emelec.com.ec ,energytravel.com.ec ,eske.ec ,espe.edu.ec ,etafashion.com ,fan.org.ec ,ferroinmobiliaria.com.ec ,feyalegria.org.ec ,ffla.net ,florestoacaso.com ,flycom.com.ec ,fortius.com.ec ,foto1.com.ec ,geosuelos.com ,grandhotelguayaquil.com ,grupocontext.com ,grupoherradura.com ,holcim.com ,hpsl.gob.ec ,infatun.gob.ec ,ingesa.com ,ipac.edu.ec ,isc.com.ec ,kfc.com.ec ,lajoya.ec ,magellanlogistics.com.ec ,marlenroses.com ,pbplaw.com ,piggis.com ,plastigomez.com ,polimundo.com.ec ,pucesi.edu.ec ,saludsa.com.ec ,snap.gov.ec ,tctelevision.com ,tctv.com.ec ,teojama.com ,tobarybustamante.com ,uees.edu.ec ,uisek.edu.ec ,unideco.com ,unilimpio.com ,uniline.com.ec ,universidadecotec.edu.ec ,unl.edu.ec ,utb.edu.ec ,utpl.edu.ec ,vallejoaraujo.com ,vianatura.com ,villaclub.ec, espe.edu.ec, colfashion.com.ec, magic-flowers.com
+<domain $gmail>
 max-smtp-out 50
 max-msg-per-connection 20 
 max-rcpt-per-message 100
@@ -145,7 +147,9 @@ smtp-pattern-list backoff
 </domain>
 #
 # http://postmaster.info.aol.com/faq/m...q.html#msgconn
-<domain aol.com>
+# domains that resolve to mailin-0?.mx.aol.com
+domain-macro aol aol.com, aim.com, netscape.net, cs.com, mail.com, wmconnect.com, icqmail.com, email.com, usa.com, aim.net, email.com, usa.com, cofreire.com
+<domain $aol>
 max-smtp-out 50
 max-msg-per-connection 20 
 max-rcpt-per-message 100
@@ -158,7 +162,9 @@ smtp-pattern-list backoff
 # backoff-retry-after 30m
 </domain>
 #
-<domain yahoo.com>
+# domains that resolve to ?.mx.mail.yahoo.com
+domain-macro yahoo yahoo.com, yahoo.in, yahoo.ca, rocketmail.com, ymail.com, yahoo.com.au, geocities.com, yahoo.com.mx, braltavista.com, ameritech.net, att.net, bellsouth.net, attbroadband.com, attcanada.net, attglobal.com, attglobal.net, attnet.com, attworldnet.com, bellatlantic.net, bellatlantic.net, bellsouth.com, bellsouth.net, flash.net, netzero.net, nvbell.net, pacbell.net, prodigy.com, prodigy.net, sbcglobal.net, sbcglobal.net, snet.net, swbell.com, swbell.net, toast.net, usa.net, verizon.com, verizon.net, verizonmail.com, vzwpix.com, wans.net, worldnet.att.net, yahoo.net, gtconsultants.net, indutorres.com, micelle-inc.com
+<domain $yahoo>
 max-smtp-out 50
 max-msg-per-connection 5
 max-msg-rate 2000/h
@@ -172,7 +178,9 @@ smtp-pattern-list backoff
 # backoff-notify postmaster@yourdomain.com
 </domain>
 #
-<domain hotmail.com>
+# domains that resolve to mx?.hotmail.com
+domain-macro hotmail hotmail.fr ,live.com ,hotmail.co.uk ,hotmail.it ,windowslive.com ,live.fr ,hotmail.de ,hotmail.es ,live.co.uk ,live.it ,hotmail.co.jp ,live.com.mx ,live.nl ,live.de ,live.cn ,live.ru ,live.ca ,live.com.ar ,hotmail.co.th ,live.com.au ,live.jp ,live.se ,live.cl ,live.com.pt ,live.be ,live.dk ,hotmail.com.tr ,livemail.tw ,live.no ,hotmail.se ,hotmail.com.tw ,live.co.kr ,hotmail.co.nz ,live.at ,live.in ,hotmail.gr ,hotmail.be ,live.hk ,live.ie ,msn.cn ,hotmail.co.kr ,hotmail.no ,hotmail.ch ,live.co.za ,hotmail.com.hk ,live.com.my ,live.com.sg ,hotmail.fi ,hotmail.my ,hotmail.co.id ,hotmail.sg ,hotmail.com.au ,hotmail.co.za ,hotmail.dk ,hotmail.rs ,live.com.ph ,hotmail.ph ,hotmail.com.vn ,hotmail.cz ,hotmail.com ,msn.com ,email.msn.com ,email.hotmail.com ,webtv.com ,webtv.net
+<domain $hotmail>
 max-smtp-out 50
 max-msg-per-connection 5
 max-msg-rate 2000/h
